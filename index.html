@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Peta UMKM Desa Candisari - Windusari, Magelang</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Playfair Display (Serif) & Plus Jakarta Sans (Sans-Serif) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons Library -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .font-serif {
+      font-family: 'Playfair Display', serif;
+    }
+    /* Sembunyikan scrollbar untuk kategori */
+    .scrollbar-none::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-none {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-[#FDFDFB] text-stone-900 antialiased scroll-smooth selection:bg-amber-500 selection:text-stone-950">
+
+  <!-- React Root Element -->
+  <div id="root"></div>
+
+  <!-- React & Babel CDN untuk menjalankan React langsung di browser -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Script Aplikasi Web React (Babel) -->
+  <script type="text/babel">
+    const { useState, useEffect, useMemo } = React;
+
+    // Data UMKM Desa Candisari (Windusari, Magelang) dengan Koordinat Riil Lereng Sumbing
+    const UMKM_DATA = [
+      {
+        id: 1,
+        name: "Keripik Singkong Bu Siti - Tradisi Candisari",
+        category: "Makanan & Minuman",
+        categorySlug: "food",
+        icon: "Utensils",
+        owner: "Ibu Siti",
+        products: "Keripik Singkong Renyah (Original, Balado, Keju)",
+        description: "Camilan renyah turun-temurun khas lereng Sumbing yang diolah menggunakan singkong mentega hasil tani langsung dari tanah vulkanis Candisari yang subur.",
+        hours: "08:00 – 17:00 WIB",
+        phone: "6281234567890",
+        instagram: "keripik_busiti_candisari",
+        gmapsUrl: "https://www.google.com/maps/dir/?api=1&destination=-7.382098,110.198308",
+        coordinates: { x: 38, y: 42 }, 
+        rating: 4.8,
+        reviews: 24,
+        featured: true,
+        image: "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&q=80&w=600"
+      },
+      {
+        id: 2,
+        name: "Kopi Arabika Sumbing - Omah Kopi Candisari",
+        category: "Kopi",
+        categorySlug: "coffee",
+        icon: "Coffee",
+        owner: "Pak Joko",
+        products: "Kopi Arabika Sumbing Single-Origin & Robusta",
+        description: "Biji kopi pilihan yang tumbuh subur di ketinggian 1200 mdpl lereng Gunung Sumbing, diproses dengan metode tradisional untuk mempertahankan cita rasa buah & rempah yang khas.",
+        hours: "09:00 – 21:00 WIB",
+        phone: "6282345678901",
+        instagram: "omahkopi_candisari",
+        gmapsUrl: "https://www.google.com/maps/dir/?api=1&destination=-7.381500,110.199500",
+        coordinates: { x: 58, y: 28 },
+        rating: 4.9,
+        reviews: 42,
+        featured: true,
+        image: "https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&q=80&w=600"
+      },
+      {
+        id: 3,
+        name: "Griya Anyaman Bambu Selogriyo",
+        category: "Kerajinan Tangan",
+        categorySlug: "handicraft",
+        icon: "Scissors",
+        owner: "Kang Asep",
+        products: "Tampah Estetik, Wadah Hantaran, Kursi Bambu, & Souvenir",
+        description: "Seni anyaman bambu khas Candisari dengan sentuhan motif klasik. Terinspirasi dari kedamaian situs Candi Selogriyo yang eksotis di Windusari.",
+        hours: "08:00 – 16:00 WIB",
+        phone: "6283456789012",
+        instagram: "bambu_selogriyo",
+        gmapsUrl: "https://www.google.com/maps/dir/?api=1&destination=-7.384500,110.197000",
+        coordinates: { x: 25, y: 62 },
+        rating: 4.7,
+        reviews: 18,
+        featured: true,
+        image: "https://images.unsplash.com/photo-1531971589569-0d93700db184?auto=format&fit=crop&q=80&w=600"
+      },
+      {
+        id: 4,
+        name: "Kelompok Tani Sayur Organik 'Sumbing Makmur'",
+        category: "Pertanian",
+        categorySlug: "agriculture",
+        icon: "Sprout",
+        owner: "Bapak Widodo",
+        products: "Kubis, Kentang Sumbing, Wortel Manis, Selada Air",
+        description: "Sayuran segar organik non-pestisida yang ditanam langsung secara terasering di bawah kaki langit Gunung Sumbing. Kualitas premium langsung dari kebun rakyat.",
+        hours: "06:00 – 12:00 WIB",
+        phone: "6284567890123",
+        instagram: "organik_sumbing_candisari",
+        gmapsUrl: "https://www.google.com/maps/dir/?api=1&destination=-7.385500,110.201000",
+        coordinates: { x: 72, y: 72 },
+        rating: 4.6,
+        reviews: 15,
+        featured: false,
+        image: "https://images.unsplash.com/photo-1592417817098-8f3d6eb19675?auto=format&fit=crop&q=80&w=600"
+      },
+      {
+        id: 5,
+        name: "Oleh-Oleh Bakpia Candisari Ayu",
+        category: "Camilan",
+        categorySlug: "snacks",
+        icon: "ShoppingBag",
+        owner: "Ibu Ningsih",
+        products: "Bakpia Panggang Aneka Rasa khas Magelangan",
+        description: "Bakpia bertekstur lembut dengan isian kacang hijau kupas manis gurih alami. Dipanggang fresh setiap pagi menggunakan tungku api arang tradisional.",
+        hours: "08:00 – 19:00 WIB",
+        phone: "6285678901234",
+        instagram: "bakpia_candisari_ayu",
+        gmapsUrl: "https://www.google.com/maps/dir/?api=1&destination=-7.383000,110.195000",
+        coordinates: { x: 18, y: 32 },
+        rating: 4.9,
+        reviews: 31,
+        featured: true,
+        image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=600"
+      },
+      {
+        id: 6,
+        name: "Batik Canting Sari - Corak Borobudur",
+        category: "Fashion",
+        categorySlug: "fashion",
+        icon: "ShoppingBag",
+        owner: "Ibu Ratih",
+        products: "Kain Batik Tulis Motif Candi, Flora Lereng Sumbing, & Selogriyo",
+        description: "Menenun kisah sejarah Magelang ke dalam helai kain primissima halus. Menyajikan motif klasik bermakna filosofis tinggi yang dilukis oleh pembatik lokal Candisari.",
+        hours: "09:00 – 17:00 WIB",
+        phone: "6286789012345",
+        instagram: "cantingsari_batik_magelang",
+        gmapsUrl: "https://www.google.com/maps/dir/?api=1&destination=-7.380500,110.196500",
+        coordinates: { x: 48, y: 18 },
+        rating: 4.8,
+        reviews: 19,
+        featured: false,
+        image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&q=80&w=600"
+      }
+    ];
+
+    const CATEGORIES = [
+      { id: "all", name: "Kabeh (Semua)", icon: "layers", color: "bg-amber-100 text-amber-950" },
+      { id: "food", name: "Daharan (Kuliner)", icon: "utensils", color: "bg-orange-100 text-orange-950", emoji: "🍛" },
+      { id: "coffee", name: "Kopi Sumbing", icon: "coffee", color: "bg-amber-100 text-amber-950", emoji: "☕" },
+      { id: "handicraft", name: "Kerajinan Bambu", icon: "scissors", color: "bg-yellow-100 text-yellow-950", emoji: "🧵" },
+      { id: "agriculture", name: "Tani Organik", icon: "sprout", color: "bg-emerald-100 text-emerald-950", emoji: "🌱" },
+      { id: "snacks", name: "Camilan Desa", icon: "shopping-bag", color: "bg-lime-100 text-lime-950", emoji: "🧁" },
+      { id: "fashion", name: "Batik & Busana", icon: "shopping-bag", color: "bg-amber-50 text-amber-950", emoji: "🛍" }
+    ];
+
+    const TESTIMONIALS = [
+      {
+        id: 1,
+        name: "Ibu Siti",
+        role: "Pemilik Keripik Singkong Bu Siti",
+        content: "Matur nuwun sanget dhumateng program pemetaan KKN niki. Sakmenika pelanggan saking kitha Magelang lan sekitarnya gampil sanget pados lokasi kulo lewat Google Maps.",
+        image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200"
+      },
+      {
+        id: 2,
+        name: "Bapak H. Suparman",
+        role: "Kepala Desa Candisari",
+        content: "Program digitalisasi ini sangat selaras dengan visi kami melestarikan budaya lokal Windusari sekaligus mengangkat potensi ekonomi warga Candisari ke kancah nasional.",
+        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200"
+      },
+      {
+        id: 3,
+        name: "Pak Joko",
+        role: "Pengelola Omah Kopi Sumbing",
+        content: "Melalui integrasi peta digital rute gmaps ini, banyak penikmat kopi yang langsung berkendara ke gubuk kami sembari menikmati suasana sejuk lereng pegunungan Candisari.",
+        image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200"
+      }
+    ];
+
+    const GALLERY_IMAGES = [
+      { url: "https://images.unsplash.com/photo-1595974482597-4b8da8879bc5?auto=format&fit=crop&q=80&w=500", caption: "Proses Sangrai Kopi Tradisional khas Lereng Sumbing" },
+      { url: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=500", caption: "Rembug Desa & Pelatihan Peta Digital oleh Tim KKN" },
+      { url: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=500", caption: "Pembuatan Kuliner Bakpia Candisari Ayu" },
+      { url: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&q=80&w=500", caption: "Terasering Sawah Subur di Desa Candisari Windusari" },
+      { url: "https://images.unsplash.com/photo-1531971589569-0d93700db184?auto=format&fit=crop&q=80&w=500", caption: "Seni Anyaman Bambu Selogriyo bernilai Estetika Tinggi" },
+      { url: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&q=80&w=500", caption: "Pelestarian Seni Batik Tulis Khas Magelangan" }
+    ];
+
+    function App() {
+      const [selectedCategory, setSelectedCategory] = useState("all");
+      const [searchQuery, setSearchQuery] = useState("");
+      const [selectedUMKM, setSelectedUMKM] = useState(UMKM_DATA[0]);
+      const [activeTestimonial, setActiveTestimonial] = useState(0);
+      const [copiedLink, setCopiedLink] = useState(false);
+      const [contactForm, setContactForm] = useState({ name: "", email: "", message: "" });
+      const [formSubmitted, setFormSubmitted] = useState(false);
+
+      // Pastikan icon Lucide dirender ulang setiap perubahan DOM
+      useEffect(() => {
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      }, [selectedUMKM, selectedCategory, searchQuery, activeTestimonial]);
+
+      const filteredUMKM = useMemo(() => {
+        return UMKM_DATA.filter(item => {
+          const matchesCategory = selectedCategory === "all" || item.categorySlug === selectedCategory;
+          const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                item.products.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                item.owner.toLowerCase().includes(searchQuery.toLowerCase());
+          return matchesCategory && matchesSearch;
+        });
+      }, [selectedCategory, searchQuery]);
+
+      const handleNextTestimonial = () => {
+        setActiveTestimonial((prev) => (prev + 1) % TESTIMONIALS.length);
+      };
+
+      const handlePrevTestimonial = () => {
+        setActiveTestimonial((prev) => (prev - 1 + TESTIMONIALS.length) % TESTIMONIALS.length);
+      };
+
+      const handleCopyLink = (umkmName) => {
+        const el = document.createElement('textarea');
+        el.value = `${window.location.href}?umkm=${encodeURIComponent(umkmName)}`;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        setCopiedLink(true);
+        setTimeout(() => setCopiedLink(false), 2000);
+      };
+
+      const handleFormSubmit = (e) => {
+        e.preventDefault();
+        if (contactForm.name && contactForm.message) {
+          setFormSubmitted(true);
+          setTimeout(() => {
+            setFormSubmitted(false);
+            setContactForm({ name: "", email: "", message: "" });
+          }, 4000);
+        }
+      };
+
+      return (
+        <div className="min-h-screen flex flex-col">
+          {/* HEADER & NAV */}
+          <header className="sticky top-0 z-50 backdrop-blur-md bg-emerald-900/95 border-b-4 border-amber-400 text-white shadow-md">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-amber-400 to-yellow-300 flex items-center justify-center text-stone-950 shadow-md">
+                  <svg className="w-8 h-8 text-stone-900" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2L4 12h3v8h10v-8h3L12 2zm0 4.5L16.5 12H14v6h-4v-6H7.5L12 6.5z"/>
+                  </svg>
+                </div>
+                <div>
+                  <span className="font-serif font-black text-xl tracking-wide text-amber-300 block">
+                    Peta UMKM Candisari
+                  </span>
+                  <span className="text-[10px] text-emerald-300 font-bold tracking-widest uppercase block">
+                    WINDUSARI • MAGELANG PARADISE
+                  </span>
+                </div>
+              </div>
+              
+              <nav className="hidden md:flex items-center space-x-8">
+                <a href="#hero" className="text-sm font-bold text-stone-100 hover:text-amber-300 transition-colors">Beranda</a>
+                <a href="#tentang" className="text-sm font-bold text-stone-100 hover:text-amber-300 transition-colors">Tentang</a>
+                <a href="#peta" className="text-sm font-bold text-amber-300 bg-emerald-950/80 px-4 py-2 rounded-full border border-amber-400/30 flex items-center space-x-1.5">
+                  <i data-lucide="map" className="w-4 h-4 text-amber-300"></i>
+                  <span>Peta KKN</span>
+                </a>
+                <a href="#unggulan" className="text-sm font-bold text-stone-100 hover:text-amber-300 transition-colors">Produk Unggulan</a>
+                <a href="#kategori" className="text-sm font-bold text-stone-100 hover:text-amber-300 transition-colors">Kategori</a>
+                <a href="#galeri" className="text-sm font-bold text-stone-100 hover:text-amber-300 transition-colors">Dokumentasi</a>
+              </nav>
+
+              <div className="flex items-center space-x-3">
+                <a 
+                  href="#peta" 
+                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-xl text-xs font-black text-stone-950 bg-amber-400 hover:bg-yellow-300 transition-all shadow-md"
+                >
+                  <span>Jelajah Sumbing</span>
+                  <i data-lucide="arrow-right" className="w-3.5 h-3.5 ml-1.5 text-stone-950"></i>
+                </a>
+              </div>
+            </div>
+          </header>
+
+          {/* HERO SECTION */}
+          <section id="hero" className="relative py-16 md:py-28 overflow-hidden bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-950 text-white">
+            <div className="absolute inset-0 opacity-20 pointer-events-none mix-blend-overlay">
+              <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1595974482597-4b8da8879bc5?auto=format&fit=crop&q=80&w=1200')" }}></div>
+            </div>
+            <div className="absolute top-0 right-0 -z-10 w-2/3 h-full opacity-50 pointer-events-none">
+              <div className="absolute top-10 right-10 w-96 h-96 rounded-full bg-yellow-400/25 blur-3xl animate-pulse"></div>
+            </div>
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
+                  <div className="inline-flex items-center space-x-2 bg-amber-400/25 text-amber-200 text-xs font-bold px-4 py-2 rounded-full border border-amber-400/30">
+                    <i data-lucide="sparkles" className="w-3.5 h-3.5 text-amber-300"></i>
+                    <span>Sugeng Rawuh ing Candisari • Windusari, Magelang</span>
+                  </div>
+                  <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-black tracking-tight leading-tight text-white">
+                    Jelajahi <span className="bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-400 bg-clip-text text-transparent">Pesona UMKM</span> Desa Candisari
+                  </h1>
+                  <p className="text-base sm:text-lg text-emerald-100 max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium">
+                    Temukan kemudahan berbelanja produk asli lereng Gunung Sumbing, kriya bambu Selogriyo, dan citarasa agung kuliner legendaris Desa Candisari dalam peta digital KKN yang cerah dan modern.
+                  </p>
+                  <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+                    <a href="#peta" className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 rounded-2xl text-base font-extrabold text-stone-950 bg-amber-400 hover:bg-yellow-300 transition-all shadow-xl shadow-amber-950/30">
+                      <i data-lucide="map-pin" className="w-5 h-5 mr-2 text-stone-950"></i>
+                      <span>Mulai Jelajahi Peta</span>
+                    </a>
+                    <a href="#gmaps-langsung" className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 rounded-2xl text-base font-bold text-white bg-white/10 hover:bg-white/20 border border-white/20 transition-all">
+                      <span>Petunjuk Rute Desa</span>
+                      <i data-lucide="chevron-right" className="w-5 h-5 ml-1.5 text-amber-300"></i>
+                    </a>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-6 relative flex justify-center">
+                  <div className="relative w-full max-w-md aspect-square bg-white/10 rounded-[3rem] p-4 sm:p-6 border border-white/20 shadow-2xl backdrop-blur-sm">
+                    <div className="w-full h-full bg-[#FCFBF8] rounded-[2.5rem] border-2 border-amber-400 overflow-hidden relative group">
+                      <div className="absolute inset-0 bg-cover bg-center opacity-85" style={{ backgroundImage: "url('https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/110.198308,-7.382098,13,0/600x600?access_token=none')" }}>
+                        <div className="absolute inset-0 bg-gradient-to-tr from-emerald-950/95 via-emerald-900/80 to-stone-900/90 flex flex-col items-center justify-center p-6 text-center">
+                          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-400 to-yellow-300 text-stone-950 flex items-center justify-center shadow-lg mb-4 border-2 border-white">
+                            <i data-lucide="map" className="w-10 h-10 text-stone-950"></i>
+                          </div>
+                          <span className="font-serif font-extrabold text-lg text-amber-300 block">E-Peta Candisari KKN</span>
+                          <span className="text-xs text-emerald-100 max-w-xs block mt-2 font-medium">
+                            Dipetakan secara khusus oleh Mahasiswa Universitas Muhammadiyah Magelang guna mendukung perekonomian mandiri warga desa.
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* TENTANG PROGRAM */}
+          <section id="tentang" className="py-24 bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
+                <span className="text-xs font-bold text-amber-600 tracking-widest uppercase block">Pemberdayaan Desa</span>
+                <h2 className="text-3xl sm:text-4xl font-serif font-black text-stone-950 tracking-tight">
+                  Transformasi Digital Berbasis Luhur Budaya
+                </h2>
+                <p className="text-base sm:text-lg text-stone-600 leading-relaxed font-medium">
+                  Website ini dikembangkan sebagai sarana promosi dan pemetaan spasial terintegrasi untuk mendampingi serta memajukan pasar pelaku industri kreatif mikro di lereng Gunung Sumbing.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="bg-[#FCFBF8] rounded-3xl p-8 border border-amber-900/10 hover:border-amber-400 hover:bg-white hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group">
+                  <div className="w-14 h-14 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-md mb-6 transition-all">
+                    <i data-lucide="compass" className="w-7 h-7"></i>
+                  </div>
+                  <h3 className="text-xl font-serif font-black text-stone-900 mb-3">Digitalisasi UMKM</h3>
+                  <p className="text-stone-600 text-sm leading-relaxed">
+                    Memperluas jangkauan pasar desa melalui peta digital, memungkinkan pembeli luar kota mengakses produk khas Candisari dengan mudah.
+                  </p>
+                </div>
+
+                <div className="bg-[#FCFBF8] rounded-3xl p-8 border border-amber-900/10 hover:border-amber-400 hover:bg-white hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group">
+                  <div className="w-14 h-14 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-md mb-6 transition-all">
+                    <i data-lucide="award" className="w-7 h-7"></i>
+                  </div>
+                  <h3 className="text-xl font-serif font-black text-stone-900 mb-3">Seni Tradisi & Kriya</h3>
+                  <p className="text-stone-600 text-sm leading-relaxed">
+                    Memperkenalkan keindahan anyaman bambu Windusari yang diwariskan dari filosofi sejarah Candi Selogriyo yang damai.
+                  </p>
+                </div>
+
+                <div className="bg-[#FCFBF8] rounded-3xl p-8 border border-amber-900/10 hover:border-amber-400 hover:bg-white hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group">
+                  <div className="w-14 h-14 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-md mb-6 transition-all">
+                    <i data-lucide="trending-up" className="w-7 h-7"></i>
+                  </div>
+                  <h3 className="text-xl font-serif font-black text-stone-900 mb-3">Potensi Tani Gunung</h3>
+                  <p className="text-stone-600 text-sm leading-relaxed">
+                    Pemetaan sayur organik serta omah kopi sumbing yang berlimpah nutrisi vulkanis langsung dari dataran tinggi Candisari.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* INTERACTIVE PETA SEKSI */}
+          <section id="peta" className="py-24 bg-[#FAF8F4] border-y border-amber-900/10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span className="text-xs font-bold text-amber-600 tracking-widest uppercase block">Layanan E-Peta KKN</span>
+                <h2 className="text-3xl sm:text-4xl font-serif font-black text-stone-950 tracking-tight">
+                  E-Peta Interaktif Desa Candisari
+                </h2>
+                <p className="text-base text-stone-700 font-medium">
+                  Membantu memetakan koordinat riil setiap UMKM. Klik pin pada peta untuk menampilkan katalog produk, kontak WhatsApp, serta navigasi rute Google Maps secara instan.
+                </p>
+              </div>
+
+              {/* FILTER BAR */}
+              <div className="bg-emerald-900 p-5 rounded-3xl shadow-xl border-2 border-amber-400 mb-10 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+                <div className="relative flex-grow max-w-md">
+                  <i data-lucide="search" className="absolute left-4 top-4 h-4 w-4 text-amber-300"></i>
+                  <input 
+                    type="text" 
+                    placeholder="Padosi UMKM, produk atau asma pemilik..."
+                    className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-emerald-950 border border-emerald-800 text-white placeholder-emerald-300 focus:outline-none focus:ring-2 focus:ring-amber-400 text-sm"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+
+                <div className="flex items-center space-x-2 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+                  <i data-lucide="filter" className="w-4 h-4 text-amber-300 flex-shrink-0 mr-1"></i>
+                  {CATEGORIES.map((cat) => (
+                    <button
+                      key={cat.id}
+                      onClick={() => setSelectedCategory(cat.id)}
+                      className={`px-4 py-2.5 rounded-2xl text-xs font-black transition-all flex-shrink-0 flex items-center space-x-1.5 ${
+                        selectedCategory === cat.id 
+                        ? 'bg-amber-400 text-stone-950 shadow-md border-2 border-white' 
+                        : 'bg-emerald-950 hover:bg-emerald-900 text-white border border-emerald-800'
+                      }`}
+                    >
+                      {cat.emoji && <span className="text-sm">{cat.emoji}</span>}
+                      <span>{cat.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* MAP & PANEL */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+                <div className="lg:col-span-7 bg-[#FAF8F5] rounded-[2.5rem] border-2 border-amber-400 shadow-xl overflow-hidden min-h-[420px] sm:min-h-[500px] flex flex-col relative">
+                  <div className="bg-emerald-900 text-white px-6 py-4 flex items-center justify-between border-b border-amber-400">
+                    <div className="flex items-center space-x-2.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-amber-300 animate-pulse"></span>
+                      <span className="font-serif font-extrabold text-xs uppercase tracking-widest text-amber-300">Peta Geospasial Sumbing</span>
+                    </div>
+                    <span className="text-xs text-emerald-200 font-bold">Windusari, Magelang</span>
+                  </div>
+
+                  <div className="flex-grow relative bg-[#EBF3ED] overflow-hidden">
+                    {/* SVG PETA */}
+                    <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+                      <rect width="100" height="100" fill="url(#javanese-grid)" />
+                      <path d="M-10,35 Q20,10 50,45 T110,25 L110,110 L-10,110 Z" fill="rgba(16, 185, 129, 0.08)" />
+                      <path d="M-10,55 Q35,40 68,68 T110,48 L110,110 L-10,110 Z" fill="rgba(245, 158, 11, 0.06)" />
+                      <path d="M 15,0 Q 35,35 50,50 T 85,100" fill="none" stroke="rgba(245, 158, 11, 0.2)" strokeWidth="4.5" strokeLinecap="round" />
+                      <path d="M 0,45 Q 45,45 50,50 T 100,55" fill="none" stroke="rgba(245, 158, 11, 0.2)" strokeWidth="3" strokeLinecap="round" />
+                      <circle cx="50" cy="50" r="4.5" fill="rgba(16, 185, 129, 0.25)" />
+                      <circle cx="25" cy="62" r="3.5" fill="rgba(245, 158, 11, 0.2)" />
+                    </svg>
+
+                    {/* Pin-pin UMKM */}
+                    {filteredUMKM.map((umkm) => {
+                      const isSelected = selectedUMKM.id === umkm.id;
+                      return (
+                        <button
+                          key={umkm.id}
+                          onClick={() => setSelectedUMKM(umkm)}
+                          className="absolute z-10 -translate-x-1/2 -translate-y-1/2 transition-transform hover:scale-125"
+                          style={{ left: `${umkm.coordinates.x}%`, top: `${umkm.coordinates.y}%` }}
+                        >
+                          <span className={`absolute top-0 left-0 w-8 h-8 rounded-full -translate-x-[25%] -translate-y-[25%] animate-ping opacity-50 ${isSelected ? 'bg-amber-500' : 'bg-emerald-500'}`}></span>
+                          <div className={`w-9 h-9 rounded-full flex items-center justify-center border-2 shadow-lg ${
+                            isSelected ? 'bg-amber-400 border-stone-950 scale-110' : 'bg-white border-emerald-600'
+                          }`}>
+                            <i data-lucide={umkm.icon === "Utensils" ? "utensils" : umkm.icon === "Coffee" ? "coffee" : umkm.icon === "Scissors" ? "scissors" : umkm.icon === "Sprout" ? "sprout" : "shopping-bag"} className="w-5 h-5"></i>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Detail UMKM */}
+                <div className="lg:col-span-5 flex flex-col">
+                  {selectedUMKM && (
+                    <div className="bg-[#FCFBF8] rounded-[2.5rem] border-2 border-amber-400 shadow-xl overflow-hidden flex flex-col h-full">
+                      <div className="h-52 relative overflow-hidden bg-stone-900">
+                        <img src={selectedUMKM.image} alt={selectedUMKM.name} className="w-full h-full object-cover" />
+                        <div className="absolute top-4 left-4">
+                          <span className="bg-[#FCFBF8] text-emerald-800 text-xs font-black px-3.5 py-1.5 rounded-full shadow-md border-2 border-amber-400">
+                            🌸 {selectedUMKM.category}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="p-6 sm:p-8 flex-grow space-y-4">
+                        <h3 className="text-xl sm:text-2xl font-serif font-black text-stone-950 leading-tight">{selectedUMKM.name}</h3>
+                        <p className="text-xs text-amber-700 font-bold uppercase">Kagunganipun (Pemilik): {selectedUMKM.owner}</p>
+                        <p className="text-sm text-stone-700 leading-relaxed font-medium">{selectedUMKM.description}</p>
+                        
+                        <div className="pt-4 border-t border-amber-900/10 space-y-3">
+                          <div className="flex items-start space-x-3 text-xs text-stone-700">
+                            <i data-lucide="shopping-bag" className="w-4.5 h-4.5 text-amber-500 flex-shrink-0"></i>
+                            <div>
+                              <strong className="block text-stone-900 font-bold font-serif">Katalog Produk Unggulan:</strong>
+                              <span className="text-stone-600 font-semibold">{selectedUMKM.products}</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-3 text-xs text-stone-700">
+                            <i data-lucide="clock" className="w-4.5 h-4.5 text-amber-500 flex-shrink-0"></i>
+                            <div>
+                              <strong className="inline-block text-stone-900 font-bold font-serif mr-1">Jam Operasional:</strong>
+                              <span className="text-stone-600 font-semibold">{selectedUMKM.hours}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="p-6 sm:p-8 bg-emerald-50 border-t-2 border-amber-400 space-y-3">
+                        <div className="grid grid-cols-2 gap-3">
+                          <a href={`https://wa.me/${selectedUMKM.phone}`} target="_blank" className="flex items-center justify-center space-x-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-black py-3.5 px-4 rounded-xl border-2 border-white">
+                            <i data-lucide="phone" className="w-4 h-4"></i>
+                            <span>Kirim WhatsApp</span>
+                          </a>
+                          <a href={selectedUMKM.gmapsUrl} target="_blank" className="flex items-center justify-center space-x-2 bg-amber-400 hover:bg-amber-300 text-stone-950 text-xs font-black py-3.5 px-4 rounded-xl">
+                            <i data-lucide="navigation" className="w-4 h-4"></i>
+                            <span>Rute Navigasi</span>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* GOOGLE MAPS DIRECT INTEGRATION */}
+          <section id="gmaps-langsung" className="py-24 bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div className="lg:col-span-5 space-y-6">
+                  <span className="text-xs font-bold text-amber-600 tracking-widest uppercase block">Aksesibilitas Geografis</span>
+                  <h2 className="text-3xl sm:text-4xl font-serif font-black text-stone-950 tracking-tight leading-tight">
+                    Terhubung Langsung dengan Google Maps Desa Candisari
+                  </h2>
+                  <p className="text-sm sm:text-base text-stone-600 leading-relaxed font-medium">
+                    Secara geografis, Desa Candisari terletak di Kecamatan Windusari, Kabupaten Magelang, dikelilingi oleh pegunungan sejuk. Guna mempermudah kunjungan wisata fisik Anda, kami menyediakan integrasi Google Maps interaktif langsung ke lokasi desa kami.
+                  </p>
+                  <div className="pt-4">
+                    <a href="https://www.google.com/maps/place/Candisari,+Windusari,+Magelang+Regency,+Central+Java" target="_blank" className="inline-flex items-center justify-center px-6 py-3.5 rounded-xl text-xs font-black text-white bg-emerald-700 hover:bg-emerald-800">
+                      <span>Buka Aplikasi Google Maps</span>
+                      <i data-lucide="external-link" className="w-4 h-4 ml-2 text-amber-300"></i>
+                    </a>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-7 h-96 sm:h-[450px] rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-amber-400">
+                  <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15817.800958190772!2d110.1895526871582!3d-7.382093099999994!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a88cf862e3d37%3A0xc0fb103bca3930b8!2sCandisari%2C%20Windusari%2C%20Magelang%2C%20Jawa%20Tengah!5e0!3m2!1sid!2sid!4v1710000000000!5m2!1sid!2sid" 
+                    width="100%" 
+                    height="100%" 
+                    style={{ border: 0 }} 
+                    allowFullScreen="" 
+                    loading="lazy"
+                  ></iframe>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* FOOTER */}
+          <footer className="bg-emerald-950 text-[#FAF8F5] pt-16 pb-8 border-t-4 border-amber-400 mt-auto">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                <div className="space-y-4">
+                  <span className="font-serif font-extrabold text-lg text-amber-300">Desa Candisari</span>
+                  <p className="text-xs text-emerald-100 leading-relaxed">
+                    Website digitalisasi pemetaan spasial UMKM binaan Program KKN Universitas Muhammadiyah Magelang untuk memajukan perekonomian kreatif mikro lokal.
+                  </p>
+                </div>
+                <div>
+                  <h4 className="font-serif font-bold text-xs text-amber-300 uppercase tracking-widest mb-4">Navigasi Utama</h4>
+                  <ul className="space-y-2 text-xs text-emerald-100">
+                    <li><a href="#hero" className="hover:underline">Beranda Utama</a></li>
+                    <li><a href="#tentang" className="hover:underline">Tentang Budaya KKN</a></li>
+                    <li><a href="#peta" className="hover:underline">Peta Digital Candisari</a></li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-serif font-bold text-xs text-amber-300 uppercase tracking-widest mb-4">Klaster UMKM</h4>
+                  <ul className="space-y-2 text-xs text-emerald-100">
+                    <li>Daharan (Kuliner Lokal)</li>
+                    <li>Kriya Anyaman Bambu</li>
+                    <li>Kopi Arabika Sumbing</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-serif font-bold text-xs text-amber-300 uppercase tracking-widest mb-4">Tim Pengembang</h4>
+                  <p className="text-xs text-emerald-100">
+                    Dikerjakan dengan penuh dedikasi oleh Tim KKN Candisari 2026 Universitas Muhammadiyah Magelang.
+                  </p>
+                </div>
+              </div>
+              <div className="pt-8 border-t border-emerald-900 text-center text-xs text-emerald-300">
+                &copy; 2026 Desa Candisari, Windusari, Magelang. Hak Cipta Dilindungi.
+              </div>
+            </div>
+          </footer>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
